@@ -1,0 +1,452 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}HANDCRAFT - Artisan Creations{% endblock %}
+
+{% block extra_css %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        min-height: 90vh;
+        background: linear-gradient(135deg, #f5ebe0 0%, #e8ddd0 100%);
+        display: flex;
+        align-items: center;
+        padding: 40px 5%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+    }
+
+    .hero-text {
+        animation: fadeInUp 1s ease;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-text h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 48px;
+        color: #4a4a4a;
+        margin-bottom: 20px;
+        line-height: 1.3;
+    }
+
+    .hero-text h1 span {
+        color: #8b6f47;
+        display: block;
+    }
+
+    .hero-text p {
+        font-size: 18px;
+        color: #6b6b6b;
+        margin-bottom: 30px;
+        line-height: 1.8;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8b6f47 0%, #6b5535 100%);
+        color: white;
+        padding: 15px 35px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 8px 20px rgba(139, 111, 71, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(139, 111, 71, 0.4);
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #8b6f47;
+        padding: 15px 35px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        border: 2px solid #8b6f47;
+        transition: all 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background: #8b6f47;
+        color: white;
+    }
+
+    .hero-image {
+        animation: fadeIn 1.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .hero-image img {
+        width: 100%;
+        max-width: 500px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: 80px 5%;
+        background: white;
+    }
+
+    .section-title {
+        text-align: center;
+        font-family: 'Playfair Display', serif;
+        font-size: 36px;
+        color: #4a4a4a;
+        margin-bottom: 50px;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        text-align: center;
+        padding: 30px 20px;
+        border-radius: 12px;
+        transition: all 0.3s;
+        background: #faf8f5;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+
+    .feature-icon {
+        font-size: 50px;
+        margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+        font-size: 20px;
+        color: #4a4a4a;
+        margin-bottom: 10px;
+    }
+
+    .feature-card p {
+        color: #6b6b6b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    /* Featured Collections */
+    .collections-section {
+        padding: 80px 5%;
+        background: #faf8f5;
+    }
+
+    .collections-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .collection-card {
+        position: relative;
+        border-radius: 15px;
+        overflow: hidden;
+        height: 300px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .collection-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+
+    .collection-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+    }
+
+    .collection-card:hover img {
+        transform: scale(1.1);
+    }
+
+    .collection-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        padding: 30px 20px 20px;
+        color: white;
+    }
+
+    .collection-overlay h3 {
+        font-size: 24px;
+        margin-bottom: 5px;
+    }
+
+    .collection-overlay p {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    /* About Section */
+    .about-section {
+        padding: 80px 5%;
+        background: white;
+    }
+
+    .about-content {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+    }
+
+    .about-images {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .about-images img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .about-images img:first-child {
+        grid-column: 1 / -1;
+        height: 250px;
+    }
+
+    .about-text h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 36px;
+        color: #4a4a4a;
+        margin-bottom: 20px;
+    }
+
+    .about-text p {
+        color: #6b6b6b;
+        line-height: 1.8;
+        margin-bottom: 15px;
+    }
+
+    /* Call to Action */
+    .cta-section {
+        padding: 80px 5%;
+        background: linear-gradient(135deg, #8b6f47 0%, #6b5535 100%);
+        text-align: center;
+        color: white;
+    }
+
+    .cta-section h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 42px;
+        margin-bottom: 20px;
+    }
+
+    .cta-section p {
+        font-size: 18px;
+        margin-bottom: 30px;
+        opacity: 0.95;
+    }
+
+    .cta-button {
+        display: inline-block;
+        background: white;
+        color: #8b6f47;
+        padding: 18px 50px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 18px;
+        transition: all 0.3s;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .hero-text h1 {
+            font-size: 36px;
+        }
+
+        .hero-buttons {
+            justify-content: center;
+        }
+
+        .about-content {
+            grid-template-columns: 1fr;
+        }
+
+        .section-title {
+            font-size: 28px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>
+                Handcrafted with Love,
+                <span>Just for You.</span>
+            </h1>
+            <p>
+                Discover unique handmade treasures created by skilled artisans. 
+                Each piece tells a story of tradition, passion, and extraordinary craftsmanship.
+            </p>
+            <div class="hero-buttons">
+                <a href="{% url 'shop' %}" class="btn-primary">🛍️ Shop Now</a>
+                <a href="#about" class="btn-secondary">Our Story</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            {% if products %}
+                <img src="{{ products.0.image.url }}" alt="Featured Product">
+            {% else %}
+                <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #d5c4a1 0%, #c4a882 100%); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; color: #8b6f47;">
+                        <div style="font-size: 80px; margin-bottom: 20px;">🧶</div>
+                        <h3 style="font-size: 24px;">Handcrafted Products</h3>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <h2 class="section-title">Why Choose Handcraft?</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🧶</div>
+            <h3>100% Handmade</h3>
+            <p>Every product is meticulously crafted by hand with attention to detail and love.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💎</div>
+            <h3>Premium Quality</h3>
+            <p>We use only the finest materials to ensure durability and beauty in every piece.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>Unique Designs</h3>
+            <p>Each creation is one-of-a-kind, making your purchase truly special and exclusive.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">❤️</div>
+            <h3>Made with Love</h3>
+            <p>Our artisans pour their heart and soul into every stitch and creation.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Collections -->
+<section class="collections-section">
+    <h2 class="section-title">Featured Collections</h2>
+    <div class="collections-grid">
+        <div class="collection-card">
+            <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=300&fit=crop" alt="Jewelry">
+            <div class="collection-overlay">
+                <h3>Jewelry</h3>
+                <p>Handcrafted accessories</p>
+            </div>
+        </div>
+        <div class="collection-card">
+            <img src="https://images.unsplash.com/photo-1611486212557-88be5ff6f941?w=400&h=300&fit=crop" alt="Crocheted Vases">
+            <div class="collection-overlay">
+                <h3>Green Crocheted Vases</h3>
+                <p>Beautiful home decor</p>
+            </div>
+        </div>
+        <div class="collection-card">
+            <img src="https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=400&h=300&fit=crop" alt="Textiles">
+            <div class="collection-overlay">
+                <h3>Textiles</h3>
+                <p>Traditional fabrics</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section" id="about">
+    <div class="about-content">
+        <div class="about-images">
+            <img src="https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=500&h=250&fit=crop" alt="Our Journey">
+            <img src="https://images.unsplash.com/photo-1611486212557-88be5ff6f941?w=250&h=200&fit=crop" alt="Craft">
+            <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=250&h=200&fit=crop" alt="Craft">
+        </div>
+        <div class="about-text">
+            <h2>Our Journey & Passion</h2>
+            <p>
+                We reanimate resilience and celebrate the art of handmade crafts. Our mission connects talented artisans with people who appreciate authentic craftsmanship.
+            </p>
+            <p>
+                Every product in our collection represents hours of dedicated work, traditional techniques passed down through generations, and a deep passion for creating beautiful, functional art.
+            </p>
+            <a href="{% url 'shop' %}" class="btn-primary" style="display: inline-block; margin-top: 20px;">Explore Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+    <h2>Ready to Discover Something Special?</h2>
+    <p>Browse our collection of unique handcrafted products</p>
+    <a href="{% url 'shop' %}" class="cta-button">🛍️ Start Shopping</a>
+</section>
+{% endblock %}

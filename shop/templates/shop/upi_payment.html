@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}UPI Payment - Handcraft Store{% endblock %}
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow p-4 border-0 text-center">
+                <h2 class="text-primary mb-4">UPI Payment Details</h2>
+                <hr>
+                
+                <p class="lead text-muted">Aapko niche diye gaye amount ko UPI ke through pay karna hai:</p>
+                
+                <div class="alert alert-info py-3">
+                    <h3 class="mb-0 font-weight-bold">Amount: ₹{{ order.total_amount }}</h3>
+                </div>
+
+                <div class="my-4 p-3 bg-white border rounded shadow-sm">
+                    <h5 class="text-secondary">Pay to UPI ID:</h5>
+                    <h2 class="text-danger"><strong>yourname@upi</strong></h2> 
+                    <p class="text-muted small">(PhonePe / GooglePay / Paytm)</p>
+                </div>
+
+                <div class="alert alert-warning text-start">
+                    <strong>Steps to follow:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Apni UPI app se payment karein.</li>
+                        <li>Payment ka screenshot le lein.</li>
+                        <li>Order ID: <strong>#{{ order.id }}</strong> ke saath screenshot humein WhatsApp karein.</li>
+                    </ul>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{% url 'home' %}" class="btn btn-dark btn-lg">Done / Go to Home</a>
+                </div>
+                
+                <p class="mt-3 text-muted small">Aapka order manual verification ke baad process hoga.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

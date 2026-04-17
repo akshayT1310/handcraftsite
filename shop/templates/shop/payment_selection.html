@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Payment Method - Handcraft Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-method-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 15px;
+    }
+
+    .payment-method-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 25px;
+        padding: 50px 40px;
+        max-width: 500px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        animation: fadeInUp 0.6s ease;
+    }
+
+    .payment-method-title {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #1e3a8a;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .method-option {
+        background: rgba(255, 255, 255, 0.5);
+        border: 2px solid rgba(59, 130, 246, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .method-option:hover {
+        border-color: rgba(59, 130, 246, 0.5);
+        background: rgba(219, 234, 254, 0.3);
+        transform: translateX(5px);
+    }
+
+    .method-option input[type="radio"] {
+        accent-color: #1e3a8a;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .method-option label {
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0;
+        cursor: pointer;
+        margin-left: 12px;
+    }
+
+    .btn-confirm {
+        background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        margin-top: 20px;
+    }
+
+    .btn-confirm:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-method-container">
+    <div class="payment-method-card">
+        <h2 class="payment-method-title">
+            <i class="fa-solid fa-credit-card me-2"></i>Payment Method
+        </h2>
+
+        <p style="text-align: center; color: #64748b; font-weight: 600; margin-bottom: 25px;">
+            Order Amount: <strong style="color: #1e3a8a; font-size: 1.2rem;">₹{{ order.total_amount }}</strong>
+        </p>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="method-option">
+                <div style="display: flex; align-items: center;">
+                    <input class="form-check-input" type="radio" name="payment_method" value="COD" id="cod" checked>
+                    <label for="cod">
+                        <i class="fa-solid fa-hand-holding-dollar me-2"></i>Cash on Delivery
+                    </label>
+                </div>
+            </div>
+
+            <div class="method-option">
+                <div style="display: flex; align-items: center;">
+                    <input class="form-check-input" type="radio" name="payment_method" value="UPI" id="upi">
+                    <label for="upi">
+                        <i class="fa-solid fa-mobile me-2"></i>Pay via UPI
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-confirm">
+                <i class="fa-solid fa-check-circle me-2"></i> Confirm Order
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

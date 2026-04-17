@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #faf8f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+        .status-badge {
+            display: inline-block;
+            background: #d32f2f;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 15px 0;
+        }
+        .info-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .refund-info {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .footer {
+            background: #faf8f5;
+            padding: 20px;
+            text-align: center;
+            color: #6b6b6b;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>❌ Order Cancelled</h1>
+            <p>Your order has been cancelled</p>
+        </div>
+        
+        <div class="content">
+            <p style="color: #4a4a4a;">Dear {{ customer_name }},</p>
+            
+            <p style="color: #4a4a4a; line-height: 1.6;">
+                We're writing to confirm that your order has been successfully cancelled.
+            </p>
+
+            <div style="text-align: center; margin: 25px 0;">
+                <div class="status-badge">CANCELLED</div>
+                <p style="color: #6b6b6b; margin-top: 10px;">Order #{{ order.id }}</p>
+                <p style="color: #999; font-size: 14px;">Total Amount: ₹{{ order.total_amount }}</p>
+            </div>
+
+            {% if cancellation_reason %}
+            <div class="info-box">
+                <strong>Cancellation Reason:</strong>
+                <p style="margin: 10px 0 0 0; color: #333;">{{ cancellation_reason }}</p>
+            </div>
+            {% endif %}
+
+            {% if show_refund_info %}
+            <div class="refund-info">
+                <strong>💰 Refund Information:</strong>
+                <p style="margin: 10px 0 0 0; color: #2e7d32;">
+                    A refund of ₹{{ order.total_amount }} will be processed to your original payment method within 5-7 business days. 
+                    Please check with your bank if you don't see the amount in your account.
+                </p>
+            </div>
+            {% endif %}
+
+            <p style="color: #4a4a4a; line-height: 1.6; margin-top: 25px;">
+                If you have any questions or concerns about this cancellation, please don't hesitate to contact us at 
+                <strong>support@handcraft.com</strong> or call us at <strong>+91-XXXXXXXXXX</strong>.
+            </p>
+
+            <p style="color: #4a4a4a; line-height: 1.6;">
+                Thank you for shopping with HANDCRAFT!<br>
+                <strong>The HANDCRAFT Team</strong> 🧶
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>HANDCRAFT - Artisan Creations</p>
+            <p>📍 Singrauli, India</p>
+        </div>
+    </div>
+</body>
+</html>

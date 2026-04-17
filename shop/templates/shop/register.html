@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - Handcraft Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 15px;
+    }
+
+    .register-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 25px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        padding: 50px 40px;
+        width: 100%;
+        max-width: 480px;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.6s ease;
+    }
+
+    .register-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .register-title {
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .register-subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 30px;
+        font-weight: 500;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 10px !important;
+        font-size: 0.95rem;
+    }
+
+    .register-card input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        margin-bottom: 20px;
+        outline: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        background: rgba(219, 234, 254, 0.3);
+    }
+
+    .register-card input:focus {
+        border-color: #3b82f6;
+        background-color: rgba(219, 234, 254, 0.6);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+        color: white;
+        padding: 14px;
+        border-radius: 50px;
+        font-weight: 700;
+        width: 100%;
+        border: none;
+        box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+        color: white;
+    }
+
+    .form-text {
+        color: #64748b !important;
+        font-size: 0.85rem;
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 25px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .login-link a {
+        color: #1e3a8a;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .login-link a:hover {
+        color: #0ea5e9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <h3 class="text-center mb-3 fw-bold">
+            <i class="fa-solid fa-user-plus text-success me-2"></i>Create Account
+        </h3>
+        <p class="text-center text-muted mb-4">Welcome to the Handcraft family!</p>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mb-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-register mt-3">
+                REGISTER <i class="fa-solid fa-user-check ms-2"></i>
+            </button>
+        </form>
+
+        <div class="text-center mt-4 text-muted small">
+            Pehle se account hai? <a href="{% url 'login' %}" class="text-primary fw-bold">Login Here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

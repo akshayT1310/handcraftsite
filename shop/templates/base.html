@@ -1,0 +1,976 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Handcraft Store{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #1e3a8a;
+            --secondary-blue: #3b82f6;
+            --light-blue: #dbeafe;
+            --accent-blue: #0ea5e9;
+            --dark-bg: #0f172a;
+            --glass-bg: rgba(30, 58, 138, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --footer-bg: #faf8f5;
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #1e293b 100%);
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --glass-bg: rgba(30, 58, 138, 0.2);
+            --footer-bg: #1e293b;
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            transition: background var(--transition-base), color var(--transition-base);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="noise"/></filter></defs><rect fill="rgba(255,255,255,0.03)" width="1200" height="600" filter="url(%23noise)"/></svg>');
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        main {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Glassmorphism Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.17);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding-top: 0.3rem !important;
+            padding-bottom: 0.3rem !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .navbar-brand {
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: #8b6f47 !important;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            padding: 5px 0;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.03);
+            color: #6b5535 !important;
+        }
+
+        .navbar-logo {
+            height: 45px;
+            width: 45px;
+            border-radius: 50%;
+            object-fit: contain;
+            box-shadow: 0 3px 10px rgba(139, 111, 71, 0.25);
+            background: white;
+            padding: 3px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .brand-main {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #8b6f47;
+        }
+
+        .brand-sub {
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #a0845c;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary) !important;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: 0 8px;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--secondary-blue), var(--accent-blue));
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+            border: none;
+            color: white !important;
+            font-weight: 700;
+            border-radius: 50px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            color: white !important;
+        }
+
+        /* Glass Cards */
+        .glass-card, .card {
+            background: var(--card-bg) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18) !important;
+            border-radius: 20px !important;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1) !important;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .glass-card:hover, .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2) !important;
+            border-color: rgba(59, 130, 246, 0.3) !important;
+        }
+
+        /* Buttons */
+        .btn {
+            font-weight: 700;
+            border-radius: 50px;
+            padding: 10px 25px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-dark {
+            background: linear-gradient(135deg, var(--primary-blue), #1e3a8a) !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+        }
+
+        .btn-dark:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+        }
+
+        .btn-outline-dark {
+            color: var(--primary-blue) !important;
+            border: 2px solid var(--primary-blue) !important;
+        }
+
+        .btn-outline-dark:hover {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)) !important;
+            color: white !important;
+            transform: translateY(-3px);
+        }
+
+        /* Messages/Alerts */
+        .alert {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+            border-radius: 15px !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15) !important;
+            color: var(--text-primary) !important;
+            margin-top: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(30, 141, 224, 0.8), rgba(119, 82, 254, 0.8)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="rgba(255,255,255,0.1)" width="1200" height="600"/></svg>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            border-radius: 30px;
+            color: white;
+            text-align: center;
+            padding: 80px 40px;
+            margin-bottom: 50px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+        }
+
+        .hero h1 {
+            font-weight: 900;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(59, 130, 246, 0.95)) !important;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.18);
+            color: white;
+            margin-top: 80px;
+            padding: 40px 0;
+        }
+
+        footer p {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        /* Product Cards */
+        .product-card {
+            border-radius: 20px !important;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.98) !important;
+            border: 1px solid rgba(59, 130, 246, 0.2) !important;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.3);
+        }
+
+        .img-container {
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, var(--light-blue), rgba(226, 232, 240, 0.5));
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .img-container img {
+            transform: scale(1.1);
+        }
+
+        .badge-new {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-buy {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            width: 100%;
+            padding: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            color: white;
+        }
+
+        /* Footer Styling */
+        .footer-main {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), var(--footer-bg)) !important;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.18);
+            color: var(--text-primary);
+            margin-top: 80px;
+            padding: 60px 0 30px;
+            transition: all var(--transition-base);
+            position: relative;
+        }
+
+        .footer-main::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo {
+            height: 48px;
+            width: 48px;
+            border-radius: 50%;
+            object-fit: contain;
+            background: white;
+            padding: 5px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .footer-logo:hover {
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+            transform: scale(1.05);
+        }
+
+        .footer-brand-name {
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin: 0;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-description {
+            color: var(--text-secondary);
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .footer-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--secondary-blue), var(--accent-blue));
+            border-radius: 2px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-radius: 6px;
+        }
+
+        .footer-link:hover {
+            color: var(--secondary-blue);
+            padding-left: 8px;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .footer-link i {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-link:hover i {
+            transform: translateX(4px);
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 0;
+        }
+
+        .footer-info-item:hover {
+            color: var(--secondary-blue);
+            padding-left: 8px;
+        }
+
+        .footer-info-item i {
+            flex-shrink: 0;
+            width: 20px;
+            color: var(--secondary-blue);
+            font-size: 1rem;
+            margin-top: 2px;
+        }
+
+        .footer-info-item span {
+            line-height: 1.4;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary-blue);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1.5px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .social-icon:hover {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            border-color: transparent;
+        }
+
+        .footer-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+            margin: 2rem 0;
+        }
+
+        .footer-copyright {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .footer-copyright p {
+            margin: 0;
+        }
+
+        /* Dark theme footer adjustments */
+        [data-theme="dark"] .footer-main {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), #0f172a) !important;
+        }
+
+        /* Footer responsive */
+        @media (max-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-main {
+                padding: 40px 0 20px;
+                margin-top: 60px;
+            }
+
+            .footer-brand-name {
+                font-size: 1.1rem;
+            }
+        }
+
+
+        input, textarea, select {
+            border-radius: 12px !important;
+            border: 2px solid rgba(59, 130, 246, 0.2) !important;
+            transition: all 0.3s ease !important;
+            font-weight: 500;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--secondary-blue) !important;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) !important;
+            background: rgba(219, 234, 254, 0.5) !important;
+        }
+
+        /* Labels */
+        label {
+            font-weight: 700 !important;
+            color: var(--primary-blue) !important;
+            margin-bottom: 8px !important;
+        }
+
+        /* Badges */
+        .badge {
+            border-radius: 50px;
+            padding: 8px 15px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #10b981, #34d399) !important;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .badge.bg-primary {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue)) !important;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card, .hero, .product-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-blue);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1rem; }
+            .navbar-brand { font-size: 1.4rem; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Handcraft" class="navbar-logo">
+                <div class="brand-text">
+                    <span class="brand-main">HANDCRAFT</span>
+                    <span class="brand-sub">Artisan Creations</span>
+                </div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="{% url 'home' %}">
+                            <i class="fa-solid fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="{% url 'shop' %}">
+                            <i class="fa-solid fa-store me-1"></i> Shop
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <!-- Theme Toggle -->
+                    <li class="nav-item">
+                        <button class="nav-link" id="themeToggle" title="Toggle dark mode" style="background:none;border:none;cursor:pointer;font-size:1.1rem;">
+                            <i class="fa-solid fa-moon" id="themeIcon"></i>
+                        </button>
+                    </li>
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'wishlist' %}" title="Wishlist">
+                                <i class="fa-solid fa-heart"></i>
+                                <span class="badge bg-danger ms-1" style="font-size: 0.65rem; padding: 0.2em 0.5em; border-radius: 50%;">{{ wishlist_count|default:0 }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cart_view' %}" id="cart-link" title="Cart">
+                                <i class="fa-solid fa-shopping-cart"></i>
+                                <span class="badge bg-danger ms-1" id="cart-count" style="font-size: 0.7rem; padding: 0.25em 0.6em; border-radius: 50%;">
+                                    {{ cart_count|default:0 }}
+                                </span>
+                            </a>
+                        </li>
+
+                        {% if user.is_staff %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminMenu" role="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-cog"></i> Admin
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminMenu">
+                                    <li><a class="dropdown-item" href="/admin/">
+                                        <i class="fa-solid fa-dashboard me-2"></i> Django Admin
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{% url 'product_list_admin' %}">
+                                        <i class="fa-solid fa-boxes me-2"></i> Manage Products
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'admin_orders_list' %}">
+                                        <i class="fa-solid fa-receipt me-2"></i> Manage Orders
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/admin/auth/user/">
+                                        <i class="fa-solid fa-users me-2"></i> Manage Users
+                                    </a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'customer_profile' %}">
+                                <i class="fa-solid fa-user-circle"></i> {{ user.username }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger" href="{% url 'logout' %}">
+                                <i class="fa-solid fa-sign-out-alt"></i> Logout
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fa-solid fa-sign-in-alt"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-sm btn-primary-custom text-white rounded-pill px-3" href="{% url 'register' %}">
+                                <i class="fa-solid fa-user-plus me-1"></i> Register
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-main">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand & Logo -->
+                <div class="footer-section">
+                    <div class="footer-brand">
+                        <img src="{% static 'images/logo.png' %}" alt="Handcraft" class="footer-logo">
+                        <h5 class="footer-brand-name">HANDCRAFT</h5>
+                    </div>
+                    <p class="footer-description">Artisan Creations - Unique handmade treasures crafted with love and tradition.</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h5 class="footer-title">Quick Links</h5>
+                    <div class="footer-links">
+                        <a href="{% url 'home' %}" class="footer-link">
+                            <i class="fa-solid fa-home"></i> Home
+                        </a>
+                        <a href="{% url 'shop' %}" class="footer-link">
+                            <i class="fa-solid fa-store"></i> Shop
+                        </a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'cart_view' %}" class="footer-link">
+                                <i class="fa-solid fa-shopping-cart"></i> Cart
+                            </a>
+                            <a href="{% url 'my_orders' %}" class="footer-link">
+                                <i class="fa-solid fa-receipt"></i> My Orders
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-section">
+                    <h5 class="footer-title">📞 Contact Us</h5>
+                    <div class="footer-info">
+                        <p class="footer-info-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>info@handcraft.com</span>
+                        </p>
+                        <p class="footer-info-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>+91-XXXXXXXXXX</span>
+                        </p>
+                        <p class="footer-info-item">
+                            <i class="fa-solid fa-map-pin"></i>
+                            <span>Singrauli, India</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Social Links -->
+                <div class="footer-section">
+                    <h5 class="footer-title">🌐 Follow Us</h5>
+                    <div class="footer-social">
+                        <a href="#" class="social-icon" title="Facebook">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-icon" title="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-icon" title="Twitter">
+                            <i class="fa-brands fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="footer-divider"></div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 HANDCRAFT Artisan Creations. All Rights Reserved. | Made with ❤️</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        <div id="cartToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message">
+                    <i class="fa-solid fa-check-circle me-2"></i> Item added to cart!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Cart Toast Notification Script -->
+    <script>
+        // Initialize toast
+        const cartToastEl = document.getElementById('cartToast');
+        const cartToast = new bootstrap.Toast(cartToastEl, { delay: 3000 });
+
+        // Function to show cart toast
+        function showCartToast(productName) {
+            document.getElementById('toast-message').innerHTML = 
+                '<i class="fa-solid fa-check-circle me-2"></i> <strong>' + productName + '</strong> added to cart!';
+            cartToast.show();
+        }
+
+        // AJAX add to cart for buttons with class 'add-to-cart-btn'
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.add-to-cart-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.getAttribute('data-product-id');
+                    const productName = this.getAttribute('data-product-name') || 'Item';
+                    const url = this.getAttribute('href');
+
+                    fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        redirect: 'manual'
+                    })
+                    .then(response => {
+                        // If redirected to login page, detect it
+                        if (response.type === 'opaqueredirect' || response.redirected) {
+                            window.location.href = response.url;
+                            return null;
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data && data.success) {
+                            // Update cart count
+                            const cartCountEl = document.getElementById('cart-count');
+                            if (cartCountEl) {
+                                cartCountEl.textContent = data.cart_count;
+                            }
+                            // Show toast
+                            showCartToast(data.product_name || productName);
+                        } else if (data && data.login_required) {
+                            window.location.href = data.login_url;
+                        }
+                    })
+                    .catch(error => {
+                        // Fallback: just follow the link
+                        console.log('AJAX failed, falling back to normal navigation');
+                    });
+                });
+            });
+        });
+
+        // Sticky navbar shrink on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const html = document.documentElement;
+        
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

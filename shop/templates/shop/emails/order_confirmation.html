@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #faf8f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #c4a882 0%, #8b6f47 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .header p {
+            margin: 10px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            color: #4a4a4a;
+            margin-bottom: 20px;
+        }
+        .order-details {
+            background: #faf8f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .order-details h2 {
+            color: #8b6f47;
+            font-size: 20px;
+            margin-top: 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e8e0d5;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            color: #6b6b6b;
+            font-weight: 500;
+        }
+        .detail-value {
+            color: #4a4a4a;
+            font-weight: 600;
+        }
+        .total-row {
+            background: #8b6f47;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .total-row .detail-label,
+        .total-row .detail-value {
+            color: white;
+            font-size: 18px;
+        }
+        .message-box {
+            background: #f0f8ff;
+            border-left: 4px solid #8b6f47;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .footer {
+            background: #faf8f5;
+            padding: 20px;
+            text-align: center;
+            color: #6b6b6b;
+            font-size: 13px;
+            border-top: 1px solid #e8e0d5;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #8b6f47;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+        @media (max-width: 600px) {
+            .email-container {
+                border-radius: 0;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎉 Order Confirmed!</h1>
+            <p>Thank you for shopping with HANDCRAFT</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <p class="greeting">Dear {{ customer_name }},</p>
+            
+            <p style="color: #4a4a4a; line-height: 1.6;">
+                Thank you for your order! We're excited to craft your unique handmade product. 
+                Your order has been successfully placed and is being processed.
+            </p>
+
+            <div class="message-box">
+                <strong>📦 Order ID: #{{ order_id }}</strong><br>
+                <span style="color: #6b6b6b; font-size: 14px;">Please keep this order ID for tracking purposes.</span>
+            </div>
+
+            <!-- Order Details -->
+            <div class="order-details">
+                <h2>📋 Order Details</h2>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Order Number</span>
+                    <span class="detail-value">#{{ order_id }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Order Date</span>
+                    <span class="detail-value">{{ order.created_at|date:"F d, Y" }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Delivery Address</span>
+                    <span class="detail-value" style="text-align: right;">{{ delivery_address }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Payment Status</span>
+                    <span class="detail-value">
+                        {% if order.payment_status %}
+                            ✅ Paid
+                        {% else %}
+                            ⏳ Pending
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="total-row">
+                    <div class="detail-row" style="border: none;">
+                        <span class="detail-label">Total Amount</span>
+                        <span class="detail-value">₹{{ total_amount }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <p style="color: #4a4a4a; line-height: 1.6; margin-top: 25px;">
+                <strong>What happens next?</strong><br>
+                ✅ Your order is being prepared<br>
+                ✅ We'll notify you when it ships<br>
+                ✅ Track your order anytime with your Order ID
+            </p>
+
+            <div style="text-align: center;">
+                <a href="#" class="btn">Track Your Order</a>
+            </div>
+
+            <p style="color: #6b6b6b; font-size: 14px; line-height: 1.6; margin-top: 30px;">
+                If you have any questions or need assistance, please don't hesitate to contact us at 
+                <a href="mailto:info@handcraft.com" style="color: #8b6f47;">info@handcraft.com</a>
+            </p>
+
+            <p style="color: #4a4a4a; margin-top: 25px;">
+                Warm regards,<br>
+                <strong style="color: #8b6f47;">The HANDCRAFT Team</strong> 🧶
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>HANDCRAFT - Artisan Creations</strong></p>
+            <p>📍 Singrauli, India | 📧 info@handcraft.com | 📱 +91-XXXXXXXXXX</p>
+            <p style="margin-top: 15px; font-size: 12px; color: #a0845c;">
+                This email was sent because you placed an order on our website.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

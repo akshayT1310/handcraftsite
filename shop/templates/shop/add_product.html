@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="
+                    color: white;
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    margin-bottom: 0.5rem;
+                ">
+                    ➕ Add New Product
+                </h1>
+                <p style="color: rgba(255, 255, 255, 0.8); font-size: 1rem;">
+                    Add a beautiful jewelry piece to your store
+                </p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="glass-card" style="
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(59, 130, 246, 0.3);
+                border-radius: 20px;
+                padding: 2rem;
+                box-shadow: 0 8px 32px rgba(30, 58, 138, 0.1);
+            ">
+                <form method="POST" enctype="multipart/form-data" id="productForm">
+                    {% csrf_token %}
+
+                    <!-- Product Name -->
+                    <div class="mb-4">
+                        <label for="id_name" style="
+                            display: block;
+                            margin-bottom: 0.5rem;
+                            color: #1e3a8a;
+                            font-weight: 600;
+                            font-size: 1rem;
+                        ">
+                            📝 Product Name <span style="color: #ef4444;">*</span>
+                        </label>
+                        {{ form.name }}
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-4">
+                        <label for="id_price" style="
+                            display: block;
+                            margin-bottom: 0.5rem;
+                            color: #1e3a8a;
+                            font-weight: 600;
+                            font-size: 1rem;
+                        ">
+                            💰 Price (₹) <span style="color: #ef4444;">*</span>
+                        </label>
+                        {{ form.price }}
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <label for="id_description" style="
+                            display: block;
+                            margin-bottom: 0.5rem;
+                            color: #1e3a8a;
+                            font-weight: 600;
+                            font-size: 1rem;
+                        ">
+                            📄 Description <span style="color: #ef4444;">*</span>
+                        </label>
+                        {{ form.description }}
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="mb-4">
+                        <label for="id_image" style="
+                            display: block;
+                            margin-bottom: 0.5rem;
+                            color: #1e3a8a;
+                            font-weight: 600;
+                            font-size: 1rem;
+                        ">
+                            🖼️ Product Image <span style="color: #ef4444;">*</span>
+                        </label>
+                        <div style="
+                            border: 3px dashed rgba(59, 130, 246, 0.5);
+                            border-radius: 15px;
+                            padding: 2rem;
+                            text-align: center;
+                            background: rgba(59, 130, 246, 0.05);
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                        " id="uploadArea">
+                            {{ form.image }}
+                            <p style="color: #64748b; margin-top: 1rem;">
+                                Click to upload or drag and drop your image here
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Active Status -->
+                    <div class="mb-4">
+                        <label style="
+                            display: flex;
+                            align-items: center;
+                            color: #1e3a8a;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">
+                            {{ form.is_active }}
+                            <span style="margin-left: 0.5rem;">✅ Make this product active (visible in store)</span>
+                        </label>
+                    </div>
+
+                    <!-- Error Messages -->
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Form Errors Per Field -->
+                    {% for field in form %}
+                        {% if field.errors %}
+                            <div class="alert alert-danger mt-2" role="alert">
+                                <strong>{{ field.label }}:</strong>
+                                {% for error in field.errors %}
+                                    {{ error }}<br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Buttons -->
+                    <div style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 1rem;
+                        margin-top: 2rem;
+                    ">
+                        <button type="submit" class="btn" style="
+                            background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+                            color: white;
+                            border: none;
+                            padding: 0.75rem 1.5rem;
+                            border-radius: 50px;
+                            font-weight: 600;
+                            font-size: 1rem;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+                        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(59, 130, 246, 0.6)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.4)';">
+                            ✓ Add Product
+                        </button>
+                        <a href="{% url 'home' %}" class="btn" style="
+                            background: rgba(255, 255, 255, 0.2);
+                            color: white;
+                            border: 2px solid rgba(255, 255, 255, 0.4);
+                            padding: 0.75rem 1.5rem;
+                            border-radius: 50px;
+                            font-weight: 600;
+                            font-size: 1rem;
+                            cursor: pointer;
+                            text-decoration: none;
+                            text-align: center;
+                            transition: all 0.3s ease;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='translateY(0)';">
+                            ← Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Drag and drop upload
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.querySelector('input[type="file"]');
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = 'rgba(59, 130, 246, 1)';
+        uploadArea.style.background = 'rgba(59, 130, 246, 0.1)';
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+        uploadArea.style.background = 'rgba(59, 130, 246, 0.05)';
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileInput.files = e.dataTransfer.files;
+        uploadArea.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+        uploadArea.style.background = 'rgba(59, 130, 246, 0.05)';
+    });
+
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+</script>
+
+<style>
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 2px solid rgba(59, 130, 246, 0.5) !important;
+        border-radius: 10px;
+        color: #1e3a8a !important;
+        font-family: inherit;
+        transition: all 0.3s ease;
+    }
+
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+        color: rgba(30, 58, 138, 0.6);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+        outline: none;
+        border-color: rgba(59, 130, 246, 1) !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+</style>
+{% endblock %}

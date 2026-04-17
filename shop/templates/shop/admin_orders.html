@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Orders - Admin{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="mb-0">📦 Order Management</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">← Back to Home</a>
+        </div>
+    </div>
+
+    <!-- Status Filter Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-2">
+            <a href="{% url 'admin_orders_list' %}" class="btn btn-light w-100 text-center {% if not current_status %}border-primary border-2{% endif %}">
+                <div class="small text-muted">All Orders</div>
+                <div class="h3 mb-0">{{ all_count }}</div>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'admin_orders_list' %}?status=Pending" class="btn btn-light w-100 text-center {% if current_status == 'Pending' %}border-danger border-2{% endif %}">
+                <div class="small text-muted">Pending</div>
+                <div class="h3 mb-0 text-danger">{{ pending_count }}</div>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'admin_orders_list' %}?status=Packed" class="btn btn-light w-100 text-center {% if current_status == 'Packed' %}border-warning border-2{% endif %}">
+                <div class="small text-muted">Packed</div>
+                <div class="h3 mb-0 text-warning">{{ packed_count }}</div>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'admin_orders_list' %}?status=Shipped" class="btn btn-light w-100 text-center {% if current_status == 'Shipped' %}border-info border-2{% endif %}">
+                <div class="small text-muted">Shipped</div>
+                <div class="h3 mb-0 text-info">{{ shipped_count }}</div>
+            </a>
+        </div>
+        <div class="col-md-2">
+            <a href="{% url 'admin_orders_list' %}?status=Delivered" class="btn btn-light w-100 text-center {% if current_status == 'Delivered' %}border-success border-2{% endif %}">
+                <div class="small text-muted">Delivered</div>
+                <div class="h3 mb-0 text-success">{{ delivered_count }}</div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    {% if orders %}
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Products</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>#{{ order.id }}</strong></td>
+                    <td>
+                        <div>{{ order.full_name }}</div>
+                        <small class="text-muted">{{ order.email }}</small>
+                    </td>
+                    <td>
+                        {% with order_items=order.items.all %}
+                            {% if order_items %}
+                                {% for item in order_items %}
+                                    <span class="badge bg-light text-dark border">
+                                        {{ item.product.name|default:"Deleted" }} x{{ item.quantity }}
+                                    </span>
+                                {% endfor %}
+                            {% else %}
+                                <small class="text-muted">No items</small>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td><strong>₹{{ order.total_amount }}</strong></td>
+                    <td>
+                        {% if order.status == 'Pending' %}
+                            <span class="badge bg-danger">🔴 Pending</span>
+                        {% elif order.status == 'Packed' %}
+                            <span class="badge bg-warning text-dark">📦 Packed</span>
+                        {% elif order.status == 'Shipped' %}
+                            <span class="badge bg-info">🚚 Shipped</span>
+                        {% elif order.status == 'Delivered' %}
+                            <span class="badge bg-success">✓ Delivered</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.payment_status %}
+                            <span class="badge bg-success">✓ Paid</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Unpaid</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <small>{{ order.created_at|date:"d/m/Y" }}</small><br>
+                        <small class="text-muted">{{ order.created_at|time:"H:i" }}</small>
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_order_detail' order.id %}" class="btn btn-sm btn-primary me-1">View</a>
+                        <form method="post" style="display: inline;" onsubmit="return confirmDelete({{ order.id }});">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_order">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center py-5">
+        <i class="fas fa-inbox fa-3x mb-3"></i>
+        <p class="mb-0 mt-3">No orders found</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+table tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+</style>
+
+<script>
+function confirmDelete(orderId) {
+    return confirm(`⚠️ Are you sure you want to delete Order #${orderId}?\n\nThis action cannot be undone!`);
+}
+</script>
+{% endblock %}

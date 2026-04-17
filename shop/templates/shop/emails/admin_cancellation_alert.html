@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #faf8f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #ff6f00 0%, #e65100 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+        .alert-badge {
+            display: inline-block;
+            background: #ff6f00;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 15px 0;
+        }
+        .order-details {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .refund-alert {
+            background: #fff3e0;
+            border-left: 4px solid #ff6f00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .footer {
+            background: #faf8f5;
+            padding: 20px;
+            text-align: center;
+            color: #6b6b6b;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>⚠️ Order Cancellation Alert</h1>
+            <p>An order has been cancelled - Action Required</p>
+        </div>
+        
+        <div class="content">
+            <p style="color: #4a4a4a;"><strong>Admin Notification:</strong></p>
+            
+            <p style="color: #4a4a4a; line-height: 1.6;">
+                An order has been cancelled by <strong>{{ cancelled_by }}</strong>. Please review the details below.
+            </p>
+
+            <div style="text-align: center; margin: 25px 0;">
+                <div class="alert-badge">CANCELLED</div>
+            </div>
+
+            <div class="order-details">
+                <div class="detail-row">
+                    <strong>Order ID:</strong>
+                    <span>#{{ order.id }}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Customer:</strong>
+                    <span>{{ order.full_name }}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Email:</strong>
+                    <span>{{ order.email }}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Phone:</strong>
+                    <span>{{ order.phone }}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Order Total:</strong>
+                    <span>₹{{ order.total_amount }}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Payment Status:</strong>
+                    <span>{% if order.payment_status %}Paid{% else %}Unpaid{% endif %}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Cancelled At:</strong>
+                    <span>{{ order.cancelled_at|date:"d M Y, H:i" }}</span>
+                </div>
+            </div>
+
+            {% if cancellation_reason %}
+            <div style="background: #fff9c4; border-left: 4px solid #fbc02d; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                <strong>Cancellation Reason:</strong>
+                <p style="margin: 10px 0 0 0; color: #333;">{{ cancellation_reason }}</p>
+            </div>
+            {% endif %}
+
+            {% if refund_needed %}
+            <div class="refund-alert">
+                <strong>💰 Refund Required:</strong>
+                <p style="margin: 10px 0 0 0; color: #e65100;">
+                    This was a paid order. Refund status: <strong>{{ order.refund_status }}</strong><br>
+                    Please process the refund of ₹{{ order.total_amount }} to the customer's original payment method.
+                </p>
+            </div>
+            {% endif %}
+
+            <p style="color: #4a4a4a; line-height: 1.6; margin-top: 25px;">
+                <strong>Action Items:</strong>
+                <ul style="color: #4a4a4a;">
+                    {% if refund_needed %}<li>Process refund to customer's payment method</li>{% endif %}
+                    <li>Update refund status in admin panel</li>
+                    <li>Contact customer if further clarification is needed</li>
+                </ul>
+            </p>
+
+            <p style="color: #999; font-size: 12px; margin-top: 25px;">
+                <strong>Admin Panel Link:</strong> <a href="{{ admin_order_url }}" style="color: #ff6f00;">View Order Details</a>
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>HANDCRAFT - Admin Notification System</p>
+            <p>📍 Singrauli, India</p>
+        </div>
+    </div>
+</body>
+</html>

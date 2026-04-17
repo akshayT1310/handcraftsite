@@ -1,0 +1,321 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Cart - Handcraft Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cart-title {
+        font-size: 2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 30px;
+    }
+
+    .cart-item {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.2) !important;
+        border-radius: 20px !important;
+        padding: 20px !important;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .cart-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2) !important;
+        border-color: rgba(59, 130, 246, 0.3) !important;
+    }
+
+    .product-image {
+        height: 100px;
+        width: 100px;
+        object-fit: cover;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    }
+
+    .product-name {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 5px;
+    }
+
+    .product-price {
+        font-size: 1.3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .quantity-control {
+        display: inline-flex;
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-radius: 50px;
+        overflow: hidden;
+        background: rgba(219, 234, 254, 0.3);
+        align-items: center;
+    }
+
+    .quantity-control .qty-btn,
+    .quantity-control .qty-input {
+        padding: 8px 12px;
+        font-weight: 700;
+        color: #1e3a8a;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+        background: none;
+        text-align: center;
+    }
+
+    .quantity-control .qty-btn {
+        cursor: pointer;
+        min-width: 35px;
+    }
+
+    .quantity-control .qty-btn:hover {
+        background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+        color: white;
+    }
+
+    .quantity-control .qty-input {
+        background: rgba(255, 255, 255, 0.8);
+        width: 50px;
+        outline: none;
+        -moz-appearance: textfield;
+    }
+
+    .quantity-control .qty-input::-webkit-outer-spin-button,
+    .quantity-control .qty-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .item-total {
+        font-size: 1.2rem;
+        font-weight: 900;
+        color: #1e293b;
+    }
+
+    .remove-btn {
+        color: #ef4444;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .remove-btn:hover {
+        color: #dc2626;
+        transform: scale(1.1);
+    }
+
+    .summary-card {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.2) !important;
+        border-radius: 20px !important;
+        padding: 30px !important;
+        position: sticky;
+        top: 150px;
+        transition: all 0.3s ease;
+    }
+
+    .summary-title {
+        font-size: 1.3rem;
+        font-weight: 900;
+        color: #1e3a8a;
+        margin-bottom: 25px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    .summary-total {
+        border-top: 2px solid rgba(59, 130, 246, 0.2);
+        padding-top: 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.2rem;
+        font-weight: 900;
+    }
+
+    .total-value {
+        background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .empty-cart {
+        text-align: center;
+        padding: 60px 30px;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: #cbd5e1;
+        margin-bottom: 20px;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: #1e293b;
+        margin-bottom: 10px;
+    }
+
+    .empty-message {
+        color: #64748b;
+        font-size: 1.05rem;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height: 70vh; padding: 30px 0;">
+    <h2 class="cart-title">
+        <i class="fa-solid fa-bag-shopping me-3"></i>Shopping Cart
+    </h2>
+
+    {% if cart_items %}
+    <div class="row g-4">
+        <div class="col-lg-8">
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="row align-items-center g-3">
+                    <div class="col-md-2 col-4 text-center">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="product-image" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="product-image" style="background: linear-gradient(135deg, #dbeafe, #e0f2fe); display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-image" style="color: #0ea5e9; font-size: 2rem;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-3 col-8">
+                        <p class="product-name">{{ item.product.name }}</p>
+                        <p class="product-price">₹{{ item.product.price }}</p>
+                    </div>
+
+                    <div class="col-md-2 col-6">
+                        <div class="quantity-control">
+                            <a href="{% url 'update_cart' item.id 'decrease' %}" class="qty-btn" data-action="decrease" data-item-id="{{ item.id }}">−</a>
+                            <input type="number" class="qty-input" value="{{ item.quantity }}" min="1" max="99" data-item-id="{{ item.id }}">
+                            <a href="{% url 'update_cart' item.id 'increase' %}" class="qty-btn" data-action="increase" data-item-id="{{ item.id }}">+</a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-6 text-end">
+                        <p class="item-total">₹{{ item.item_total }}</p>
+                        <a href="{% url 'remove_from_cart' item.id %}" class="remove-btn">
+                            <i class="fa-solid fa-trash-can me-1"></i> Remove
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="summary-card">
+                <h5 class="summary-title">
+                    <i class="fa-solid fa-receipt me-2"></i>Order Summary
+                </h5>
+                
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹{{ total }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span style="color: #10b981; font-weight: 700;">FREE</span>
+                </div>
+                
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span class="total-value">₹{{ total }}</span>
+                </div>
+
+                <a href="{% url 'checkout' %}" class="btn btn-primary-custom w-100 mt-4" style="padding: 15px; font-size: 1rem;">
+                    <i class="fa-solid fa-lock me-2"></i> Proceed to Checkout
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-outline-dark w-100 mt-2" style="padding: 12px; font-weight: 700;">
+                    <i class="fa-solid fa-arrow-left me-2"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-card empty-cart">
+        <div class="empty-icon">
+            <i class="fa-solid fa-shopping-bag"></i>
+        </div>
+        <h3 class="empty-title">Your Cart is Empty</h3>
+        <p class="empty-message">Handcraft ke behtareen products ko apne cart mein add karein!</p>
+        <a href="{% url 'home' %}" class="btn btn-primary-custom px-5 py-3">
+            <i class="fa-solid fa-store me-2"></i> Start Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Quantity buttons
+    document.querySelectorAll('.qty-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const itemId = this.getAttribute('data-item-id');
+            const action = this.getAttribute('data-action');
+            const url = `/update-cart/${itemId}/${action}/`;
+            window.location.href = url;
+        });
+    });
+
+    // Quantity input change
+    document.querySelectorAll('.qty-input').forEach(input => {
+        let originalValue = input.value;
+        
+        input.addEventListener('change', function() {
+            const itemId = this.getAttribute('data-item-id');
+            let newQty = parseInt(this.value);
+            
+            if (isNaN(newQty) || newQty < 1) newQty = 1;
+            if (newQty > 99) newQty = 99;
+            
+            if (newQty !== parseInt(originalValue)) {
+                const action = newQty > parseInt(originalValue) ? 'increase' : 'decrease';
+                const diff = Math.abs(newQty - parseInt(originalValue));
+                
+                // Redirect to update cart multiple times
+                const url = `/update-cart/${itemId}/${action}/`;
+                window.location.href = url;
+            }
+        });
+        
+        input.addEventListener('blur', function() {
+            let val = parseInt(this.value);
+            if (isNaN(val) || val < 1) val = 1;
+            if (val > 99) val = 99;
+            this.value = val;
+        });
+    });
+});
+</script>
+{% endblock %}

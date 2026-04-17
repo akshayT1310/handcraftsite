@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .delete-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.6) !important;
+    }
+    .cancel-btn:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+        transform: translateY(-2px);
+    }
+    .delete-btn, .cancel-btn {
+        transition: all 0.3s ease;
+    }
+    .cancel-btn {
+        background: rgba(255, 255, 255, 0.2);
+    }
+</style>
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="
+                    color: #ef4444;
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    margin-bottom: 1rem;
+                ">
+                    ⚠️ Delete Product?
+                </h1>
+                <p style="color: rgba(255, 255, 255, 0.8); font-size: 1rem;">
+                    This action cannot be undone
+                </p>
+            </div>
+
+            <!-- Confirmation Card -->
+            <div class="glass-card" style="
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(239, 68, 68, 0.3);
+                border-radius: 20px;
+                padding: 2rem;
+                box-shadow: 0 8px 32px rgba(239, 68, 68, 0.1);
+            ">
+                <!-- Product Preview -->
+                <div style="
+                    background: rgba(239, 68, 68, 0.1);
+                    border-radius: 15px;
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
+                    text-align: center;
+                ">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" style="
+                            max-width: 150px;
+                            max-height: 150px;
+                            border-radius: 10px;
+                            margin-bottom: 1rem;
+                            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+                        ">
+                    {% else %}
+                        <div style="
+                            width: 150px;
+                            height: 150px;
+                            background: rgba(239, 68, 68, 0.2);
+                            border-radius: 10px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 1rem;
+                            font-size: 3rem;
+                        ">
+                            📦
+                        </div>
+                    {% endif %}
+                    <h2 style="color: #1e3a8a; margin-bottom: 0.5rem;">{{ product.name }}</h2>
+                    <p style="color: #64748b; margin: 0;">
+                        Price: <strong style="color: #1e3a8a;">₹{{ product.price }}</strong>
+                    </p>
+                </div>
+
+                <!-- Warning Message -->
+                <div style="
+                    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+                    border-left: 4px solid #db2727;
+                    border-radius: 10px;
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
+                ">
+                    <p style="color: #1e3a8a; margin: 0; font-weight: 600;">
+                        🔴 Once deleted, this product will be permanently removed from your store and cannot be recovered.
+                    </p>
+                </div>
+
+                <!-- Confirmation Form -->
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div style="
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 1rem;
+                    ">
+                        <button type="submit" class="btn delete-btn" style="
+                            background: linear-gradient(135deg, #ef4444, #dc2626);
+                            color: white;
+                            border: none;
+                            padding: 0.75rem 1.5rem;
+                            border-radius: 50px;
+                            font-weight: 600;
+                            font-size: 1rem;
+                            cursor: pointer;
+                            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+                        ">
+                            🗑️ Yes, Delete Forever
+                        </button>
+                        <a href="{% url 'home' %}" class="btn cancel-btn" style="
+                            color: white;
+                            border: 2px solid rgba(255, 255, 255, 0.4);
+                            padding: 0.75rem 1.5rem;
+                            border-radius: 50px;
+                            font-weight: 600;
+                            font-size: 1rem;
+                            cursor: pointer;
+                            text-decoration: none;
+                            text-align: center;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        ">
+                            ← Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #faf8f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #c4a882 0%, #8b6f47 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+        .status-badge {
+            display: inline-block;
+            background: #8b6f47;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 15px 0;
+        }
+        .footer {
+            background: #faf8f5;
+            padding: 20px;
+            text-align: center;
+            color: #6b6b6b;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>📦 Order Update</h1>
+            <p>Your order status has changed</p>
+        </div>
+        
+        <div class="content">
+            <p style="color: #4a4a4a;">Dear {{ customer_name }},</p>
+            
+            <p style="color: #4a4a4a; line-height: 1.6;">
+                We're writing to let you know that your order status has been updated.
+            </p>
+
+            <div style="text-align: center; margin: 25px 0;">
+                <div class="status-badge">{{ new_status }}</div>
+                <p style="color: #6b6b6b; margin-top: 10px;">Order #{{ order.id }}</p>
+            </div>
+
+            <p style="color: #4a4a4a; line-height: 1.6;">
+                Thank you for shopping with HANDCRAFT!<br>
+                <strong>The HANDCRAFT Team</strong> 🧶
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>HANDCRAFT - Artisan Creations</p>
+            <p>📍 Singrauli, India</p>
+        </div>
+    </div>
+</body>
+</html>

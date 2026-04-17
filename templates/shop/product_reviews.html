@@ -1,0 +1,458 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews - {{ product.name }} | HANDCRAFT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #faf8f5;
+            color: #4a4a4a;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #faf8f5;
+            padding: 20px 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px solid #e8e0d5;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 60px;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #8b6f47;
+            letter-spacing: 2px;
+        }
+
+        .logo-text-sub {
+            font-size: 10px;
+            color: #8b6f47;
+            letter-spacing: 1px;
+            font-weight: 400;
+            display: block;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #4a4a4a;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #8b6f47;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #8b6f47 0%, #6b5535 100%);
+            padding: 40px 5%;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .page-header .breadcrumb {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .page-header .breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .page-header .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main Content */
+        .reviews-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 5%;
+        }
+
+        .reviews-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 40px;
+        }
+
+        /* Rating Summary */
+        .rating-summary {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .rating-big {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .rating-number {
+            font-size: 56px;
+            font-weight: 700;
+            color: #8b6f47;
+            line-height: 1;
+        }
+
+        .rating-stars {
+            font-size: 24px;
+            color: #ffc107;
+            margin: 10px 0;
+        }
+
+        .rating-total {
+            font-size: 14px;
+            color: #6b6b6b;
+        }
+
+        .write-review-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #8b6f47;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+        }
+
+        .write-review-btn:hover {
+            background-color: #6b5535;
+        }
+
+        .rating-bars {
+            margin-top: 20px;
+        }
+
+        .rating-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .rating-bar-label {
+            font-size: 14px;
+            color: #4a4a4a;
+            min-width: 60px;
+        }
+
+        .rating-bar-track {
+            flex: 1;
+            height: 8px;
+            background-color: #f0ebe5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .rating-bar-fill {
+            height: 100%;
+            background-color: #ffc107;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .rating-bar-count {
+            font-size: 12px;
+            color: #6b6b6b;
+            min-width: 20px;
+            text-align: right;
+        }
+
+        /* Reviews List */
+        .reviews-list {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .reviews-list h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #4a4a4a;
+        }
+
+        .review-item {
+            padding: 25px 0;
+            border-bottom: 1px solid #e8e0d5;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .review-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #8b6f47;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .review-author-info h4 {
+            font-size: 16px;
+            color: #4a4a4a;
+            margin-bottom: 3px;
+        }
+
+        .review-author-info .review-date {
+            font-size: 12px;
+            color: #6b6b6b;
+        }
+
+        .review-rating {
+            font-size: 16px;
+            color: #ffc107;
+        }
+
+        .review-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a4a4a;
+            margin-bottom: 10px;
+        }
+
+        .review-comment {
+            font-size: 14px;
+            color: #6b6b6b;
+            line-height: 1.7;
+        }
+
+        .verified-badge {
+            display: inline-block;
+            background-color: #4caf50;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+
+        /* Empty State */
+        .empty-reviews {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-reviews-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-reviews h3 {
+            font-size: 20px;
+            color: #4a4a4a;
+            margin-bottom: 10px;
+        }
+
+        .empty-reviews p {
+            color: #6b6b6b;
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(to right, #c4a882 0%, #8b6f47 100%);
+            padding: 30px 5%;
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .reviews-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .rating-summary {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="logo-container">
+            <img src="{% static 'images/logo.png' %}" alt="Handcraft" class="logo-img">
+            <div class="logo-text">
+                HANDCRAFT
+                <span class="logo-text-sub">ARTISAN CREATIONS</span>
+            </div>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'shop' %}">Shop</a></li>
+            <li><a href="{% url 'home' %}#about">Our Story</a></li>
+            <li><a href="{% url 'home' %}#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Customer Reviews</h1>
+        <div class="breadcrumb">
+            <a href="{% url 'home' %}">Home</a> / 
+            <a href="{% url 'shop' %}">Shop</a> / 
+            <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a> / 
+            Reviews
+        </div>
+    </section>
+
+    <!-- Reviews Content -->
+    <div class="reviews-container">
+        <div class="reviews-layout">
+            
+            <!-- Rating Summary Sidebar -->
+            <aside class="rating-summary">
+                <div class="rating-big">
+                    <div class="rating-number">{{ avg_rating|floatformat:1 }}</div>
+                    <div class="rating-stars">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= avg_rating %}
+                                ★
+                            {% else %}
+                                ☆
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="rating-total">{{ total_reviews }} review{{ total_reviews|pluralize }}</div>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'add_review' product.id %}" class="write-review-btn">Write a Review</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="write-review-btn">Login to Review</a>
+                {% endif %}
+
+                <div class="rating-bars">
+                    {% for bar in rating_bars %}
+                    <div class="rating-bar-item">
+                        <span class="rating-bar-label">{{ bar.star }} star{{ bar.star|pluralize }}</span>
+                        <div class="rating-bar-track">
+                            <div class="rating-bar-fill" style="width: {{ bar.percentage }}%"></div>
+                        </div>
+                        <span class="rating-bar-count">{{ bar.count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </aside>
+
+            <!-- Reviews List -->
+            <div class="reviews-list">
+                <h2>All Reviews</h2>
+                
+                {% for review in reviews %}
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="review-author">
+                            <div class="review-avatar">{{ review.user.username|first|upper }}</div>
+                            <div class="review-author-info">
+                                <h4>{{ review.user.username }}{% if review.user.is_staff %}<span class="verified-badge">Verified Seller</span>{% endif %}</h4>
+                                <span class="review-date">{{ review.created_at|date:"F d, Y" }}</span>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    {% if review.title %}
+                    <h3 class="review-title">{{ review.title }}</h3>
+                    {% endif %}
+                    
+                    <p class="review-comment">{{ review.comment }}</p>
+                </div>
+                {% empty %}
+                <div class="empty-reviews">
+                    <div class="empty-reviews-icon">💬</div>
+                    <h3>No Reviews Yet</h3>
+                    <p>Be the first to share your thoughts about this product!</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'add_review' product.id %}" class="write-review-btn" style="display: inline-block; width: auto; padding: 12px 30px;">Write a Review</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 HANDCRAFT Artisan Creations. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

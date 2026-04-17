@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Handcraft Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-container {
+        min-height: 80vh;
+        padding: 30px 0;
+    }
+
+    .checkout-title {
+        font-size: 2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 40px;
+    }
+
+    .checkout-card {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.2) !important;
+        border-radius: 25px !important;
+        padding: 40px !important;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1) !important;
+        transition: all 0.3s ease;
+    }
+
+    .checkout-card:hover {
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2) !important;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 10px !important;
+    }
+
+    .form-control {
+        border: 2px solid rgba(59, 130, 246, 0.2);
+        border-radius: 12px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        background: rgba(219, 234, 254, 0.3);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .amount-box {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(14, 165, 233, 0.1));
+        border: 2px solid rgba(59, 130, 246, 0.3);
+        border-radius: 15px;
+        padding: 25px;
+        margin: 30px 0;
+        text-align: center;
+    }
+
+    .amount-label {
+        color: #64748b;
+        font-weight: 600;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+    }
+
+    .amount-value {
+        font-size: 2.2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #3b82f6, #0ea5e9);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .btn-proceed {
+        background: linear-gradient(135deg, #1e3a8a, #0ea5e9);
+        color: white;
+        border: none;
+        padding: 16px 30px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+    }
+
+    .btn-proceed:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(30, 58, 138, 0.4);
+        color: white;
+    }
+
+    .back-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .back-link a {
+        color: #64748b;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .back-link a:hover {
+        color: #1e3a8a;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container checkout-container">
+    <h2 class="checkout-title">
+        <i class="fa-solid fa-credit-card me-3"></i>Checkout
+    </h2>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="checkout-card">
+                <h4 class="fw-bold mb-4 text-primary">
+                    <i class="fa-solid fa-map-location-dot me-2"></i>Delivery Details
+                </h4>
+                
+                <form method="POST" action="{% url 'checkout' %}">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name *</label>
+                            <input type="text" name="full_name" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email Address *</label>
+                            <input type="email" name="email" class="form-control" placeholder="example@mail.com" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">📱 Phone Number *</label>
+                        <input type="tel" name="phone" class="form-control" placeholder="+91-9876543210" 
+                               value="{{ request.session.user_phone|default:'' }}" required pattern="[0-9+\-]{10,15}" title="Please enter a valid phone number">
+                        <small class="form-text text-muted">We'll send order updates to this number via SMS</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Complete Address *</label>
+                        <textarea name="address" class="form-control form-textarea" placeholder="House No, Street, Landmark" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">City *</label>
+                            <input type="text" name="city" class="form-control" placeholder="Your city" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Pincode *</label>
+                            <input type="text" name="pincode" class="form-control" placeholder="e.g., 488441" required>
+                        </div>
+                    </div>
+                    
+                    <div class="amount-box">
+                        <p class="amount-label">Total Amount to Pay</p>
+                        <p class="amount-value">₹{{ total }}</p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-proceed">
+                        <i class="fa-solid fa-lock me-2"></i> Confirm & Proceed to Payment
+                    </button>
+                </form>
+                
+                <div class="back-link">
+                    <a href="{% url 'cart_view' %}">
+                        <i class="fa-solid fa-arrow-left me-2"></i> Back to Cart
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

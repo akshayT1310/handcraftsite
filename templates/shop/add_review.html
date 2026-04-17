@@ -1,0 +1,368 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write a Review - {{ product.name }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #faf8f5;
+            color: #4a4a4a;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #faf8f5;
+            padding: 20px 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px solid #e8e0d5;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        .logo-img {
+            height: 60px;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #8b6f47;
+            letter-spacing: 2px;
+        }
+
+        .logo-text-sub {
+            font-size: 10px;
+            color: #8b6f47;
+            letter-spacing: 1px;
+            font-weight: 400;
+            display: block;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #4a4a4a;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #8b6f47 0%, #6b5535 100%);
+            padding: 40px 5%;
+            color: white;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* Form Container */
+        .form-container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 0 5%;
+        }
+
+        .review-form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+
+        .product-info-box {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background-color: #f5ebe0;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .product-info-box img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .product-info-box h3 {
+            font-size: 18px;
+            color: #4a4a4a;
+            margin-bottom: 5px;
+        }
+
+        .product-info-box .price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #8b6f47;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a4a4a;
+            margin-bottom: 8px;
+        }
+
+        .rating-select {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .rating-option {
+            display: none;
+        }
+
+        .rating-option + label {
+            padding: 10px 20px;
+            background-color: #f0ebe5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .rating-option:checked + label {
+            background-color: #8b6f47;
+            color: white;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e8e0d5;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #8b6f47;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 14px;
+            background-color: #8b6f47;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #6b5535;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 14px;
+            background-color: #f0ebe5;
+            color: #4a4a4a;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e8ddd0;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(to right, #c4a882 0%, #8b6f47 100%);
+            padding: 30px 5%;
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+        }
+
+        /* Messages */
+        .messages {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 0 5%;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .review-form-card {
+                padding: 25px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="logo-container">
+            <img src="{% static 'images/logo.png' %}" alt="Handcraft" class="logo-img">
+            <div class="logo-text">
+                HANDCRAFT
+                <span class="logo-text-sub">ARTISAN CREATIONS</span>
+            </div>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'shop' %}">Shop</a></li>
+            <li><a href="{% url 'home' %}#about">Our Story</a></li>
+            <li><a href="{% url 'home' %}#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Write a Review</h1>
+        <p>Share your experience with this product</p>
+    </section>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <div class="review-form-card">
+            
+            <!-- Product Info -->
+            <div class="product-info-box">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% endif %}
+                <div>
+                    <h3>{{ product.name }}</h3>
+                    <p class="price">₹{{ product.price }}</p>
+                </div>
+            </div>
+
+            <!-- Review Form -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>Your Rating *</label>
+                    <div class="rating-select">
+                        {% for value, label in form.rating.field.choices %}
+                        <input type="radio" name="rating" value="{{ value }}" id="rating{{ value }}" class="rating-option" required>
+                        <label for="rating{{ value }}">⭐ {{ label }} Star{{ label|pluralize }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.title.id_for_label }}">Review Title *</label>
+                    {{ form.title }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.comment.id_for_label }}">Your Review *</label>
+                    {{ form.comment }}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Submit Review</button>
+                    <a href="{% url 'product_reviews' product.id %}" class="btn-cancel">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 HANDCRAFT Artisan Creations. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
