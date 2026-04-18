@@ -4,7 +4,9 @@ Django settings for handcraftsite project.
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -83,6 +85,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -101,8 +104,8 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Razorpay Payment Gateway Configuration
-RAZORPAY_KEY_ID = 'rzp_test_AbC123Xyz'
-RAZORPAY_KEY_SECRET = 'uYtReWqAsDfGhjKl'
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -110,15 +113,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@gmail.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'your-app-password'  # Replace with app password
 DEFAULT_FROM_EMAIL = 'HANDCRAFT <your-email@gmail.com>'
 
 # MSG91 SMS Configuration
 SMS_ENABLED = True  # Set to False to disable SMS
-SMS_API_KEY = '508421AXgEfyvK69dcfc87P1'  # Your MSG91 authkey
+SMS_API_KEY = os.getenv('SMS_API_KEY')
 SMS_SENDER_ID = 'HNDCFT'  # Your approved sender ID (6 characters)
 SMS_ROUTE = '4'  # 4 = Transactional, 1 = Promotional
 SMS_TEMPLATE_ID = ''  # Your MSG91 template ID (optional for flow API)
