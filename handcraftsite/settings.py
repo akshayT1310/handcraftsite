@@ -82,6 +82,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+INSTALLED_APPS = [
+    'shop',  
+]
+
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
