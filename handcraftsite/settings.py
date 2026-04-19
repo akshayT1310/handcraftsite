@@ -5,8 +5,9 @@ Django settings for handcraftsite project.
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+import dj_database_url
 load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -61,13 +62,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'handcraftsite.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+DATABASE_URL ={
+    'default': dj_database_url.parse(
+        os.environ.get("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
-
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -83,8 +84,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
@@ -126,4 +125,3 @@ SMS_SENDER_ID = 'HNDCFT'  # Your approved sender ID (6 characters)
 SMS_ROUTE = '4'  # 4 = Transactional, 1 = Promotional
 SMS_TEMPLATE_ID = ''  # Your MSG91 template ID (optional for flow API)
 SMS_COUNTRY_CODE = '91'  # India country code
-
