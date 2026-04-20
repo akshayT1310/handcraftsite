@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.urls import reverse
@@ -10,6 +11,7 @@ from django.db.models import Q
 from django.utils import timezone
 from .models import Product, Order, OrderItem, CartItem, Review, WishlistItem
 from .forms import UserRegisterForm, ProductForm, ReviewForm # Ensure this matches your forms.py
+
 from .notifications import (
     send_order_confirmation_email, 
     send_order_status_update_email, 
@@ -19,6 +21,12 @@ from .notifications import (
     send_order_cancelled_sms,
     send_admin_cancellation_alert,
 )
+from django.shortcuts import render
+from .models import Product
+
+def home(request):
+    products = Product.objects.all()
+    return render(request, "shop/home.html", {"products": products})
 
 # --- 1. AUTHENTICATION VIEWS ---
 
@@ -66,6 +74,10 @@ def home(request):
     """Home page with featured products"""
     products = Product.objects.filter(is_active=True).order_by('-id')[:6]
     return render(request, 'shop/home.html', {'products': products})
+
+def home(request):
+    products = Product.objects.all()
+    return render(request, "shop/home.html", {"products": products})
 
 def shop_page(request):
     """Shop page with filters, search, and pagination"""
