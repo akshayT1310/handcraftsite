@@ -71,6 +71,10 @@ WSGI_APPLICATION = 'handcraftsite.wsgi.application'
 # 2. Vercel-specific DB pieces (`DB_NAME` + `DB_HOST`) — legacy support.
 # 3. Local sqlite fallback.
 DATABASE_URL = os.environ.get('DATABASE_URL')
+# If running on Vercel and no DATABASE_URL is provided, use a writable
+# temporary sqlite path so serverless functions can write during runtime.
+VERCEL = bool(os.environ.get('VERCEL'))
+DEFAULT_SQLITE_PATH = os.environ.get('SQLITE_DB_PATH') if os.environ.get('SQLITE_DB_PATH') else (Path('/tmp/db.sqlite3') if VERCEL else BASE_DIR / 'db.sqlite3')
 if DATABASE_URL:
     # When a DATABASE_URL is provided (e.g. Supabase connection string),
     # prefer that. However, importing Django's PostgreSQL backend requires
@@ -96,7 +100,7 @@ if DATABASE_URL:
     else:
         # If we're running on Vercel (build) and driver isn't installed,
         # fall back to sqlite to let build steps like collectstatic succeed.
-        if os.environ.get('VERCEL'):
+            if os.environ.get('VERCEL'):
             import warnings
 
             warnings.warn(
@@ -106,7 +110,7 @@ if DATABASE_URL:
             DATABASES = {
                 "default": {
                     "ENGINE": "django.db.backends.sqlite3",
-                    "NAME": BASE_DIR / "db.sqlite3",
+                        "NAME": DEFAULT_SQLITE_PATH,
                 }
             }
         else:
@@ -135,7 +139,7 @@ else:
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.sqlite3",
-                "NAME": BASE_DIR / "db.sqlite3",
+                "NAME": DEFAULT_SQLITE_PATH,
             }
         }
 
