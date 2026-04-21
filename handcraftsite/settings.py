@@ -12,15 +12,18 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1%yq_ex3tg@tt2c&!+s5th)h^bc17nl1_7fc1mn6x0-dw#z#=0'
+# Prefer to set `SECRET_KEY` via environment variable in production.
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-1%yq_ex3tg@tt2c&!+s5th)h^bc17nl1_7fc1mn6x0-dw#z#=0')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-DEBUG = True
+# Toggle DEBUG from environment (default True for local/dev).
+DEBUG = str(os.getenv('DEBUG', 'True')).lower() in ('1', 'true', 'yes')
 
-ALLOWED_HOSTS = ['*']
+# Configure allowed hosts via env var (comma separated). Defaults to '*' for dev.
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -71,6 +74,11 @@ WSGI_APPLICATION = 'handcraftsite.wsgi.application'
 # 2. Vercel-specific DB pieces (`DB_NAME` + `DB_HOST`) — legacy support.
 # 3. Local sqlite fallback.
 DATABASE_URL = os.environ.get('DATABASE_URL')
+# If running on Vercel and no DATABASE_URL is provided, use a writable
+# temporary sqlite path so serverless functions can write during runtime.
+VERCEL = bool(os.environ.get('VERCEL'))
+# Use a writable sqlite path on Vercel (serverless) — fall back to project sqlite locally.
+DEFAULT_SQLITE_PATH = os.environ.get('SQLITE_DB_PATH') if os.environ.get('SQLITE_DB_PATH') else (Path('/tmp/db.sqlite3') if VERCEL else BASE_DIR / 'db.sqlite3')
 if DATABASE_URL:
     # When a DATABASE_URL is provided (e.g. Supabase connection string),
     # prefer that. However, importing Django's PostgreSQL backend requires
@@ -90,9 +98,26 @@ if DATABASE_URL:
             pg_driver_available = False
 
     if pg_driver_available:
-        DATABASES = {
-            'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
-        }
+        try:
+            parsed = dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
+            if not parsed:
+                raise ValueError('Empty config returned from dj_database_url.parse')
+            DATABASES = {'default': parsed}
+        except Exception as e:
+            # If parsing fails, avoid crashing builds; on Vercel fall back to sqlite.
+            import warnings
+
+            warnings.warn(f"Failed to parse DATABASE_URL: {e}. Falling back to sqlite on this environment.")
+            if os.environ.get('VERCEL'):
+                DATABASES = {
+                    "default": {
+                        "ENGINE": "django.db.backends.sqlite3",
+                        "NAME": str(DEFAULT_SQLITE_PATH),
+                    }
+                }
+            else:
+                # In non-Vercel environments, re-raise so the deployer notices the broken DATABASE_URL.
+                raise
     else:
         # If we're running on Vercel (build) and driver isn't installed,
         # fall back to sqlite to let build steps like collectstatic succeed.
@@ -106,7 +131,7 @@ if DATABASE_URL:
             DATABASES = {
                 "default": {
                     "ENGINE": "django.db.backends.sqlite3",
-                    "NAME": BASE_DIR / "db.sqlite3",
+                    "NAME": str(DEFAULT_SQLITE_PATH),
                 }
             }
         else:
@@ -135,7 +160,7 @@ else:
         DATABASES = {
             "default": {
                 "ENGINE": "django.db.backends.sqlite3",
-                "NAME": BASE_DIR / "db.sqlite3",
+                "NAME": str(DEFAULT_SQLITE_PATH),
             }
         }
 
