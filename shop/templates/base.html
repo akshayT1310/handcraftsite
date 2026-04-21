@@ -118,6 +118,19 @@
             background: white;
             padding: 3px;
         }
+        /* Navbar badge styles (centralized from inline attributes) */
+        .nav-badge {
+            font-size: 0.7rem;
+            padding: 0.25em 0.6em;
+            border-radius: 50%;
+            min-width: 1.6em;
+            text-align: center;
+            display: inline-block;
+        }
+        .nav-badge.small {
+            font-size: 0.65rem;
+            padding: 0.2em 0.5em;
+        }
 
         .brand-text {
             display: flex;
@@ -704,17 +717,15 @@
 
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'wishlist' %}" title="Wishlist">
-                                <i class="fa-solid fa-heart"></i>
-                                <span class="badge bg-danger ms-1" style="font-size: 0.65rem; padding: 0.2em 0.5em; border-radius: 50%;">{{ wishlist_count|default:0 }}</span>
+                            <a class="nav-link" href="{% url 'wishlist' %}" title="Wishlist" aria-label="Wishlist">
+                                <i class="fa-solid fa-heart" aria-hidden="true"></i>
+                                <span id="wishlist-count" class="badge bg-danger nav-badge ms-1 {% if not wishlist_count %}visually-hidden{% endif %}" aria-live="polite" aria-atomic="true">{{ wishlist_count|default:0 }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'cart_view' %}" id="cart-link" title="Cart">
-                                <i class="fa-solid fa-shopping-cart"></i>
-                                <span class="badge bg-danger ms-1" id="cart-count" style="font-size: 0.7rem; padding: 0.25em 0.6em; border-radius: 50%;">
-                                    {{ cart_count|default:0 }}
-                                </span>
+                            <a class="nav-link" href="{% url 'cart_view' %}" id="cart-link" title="Cart" aria-label="Cart">
+                                <i class="fa-solid fa-shopping-cart" aria-hidden="true"></i>
+                                <span id="cart-count" class="badge bg-danger nav-badge ms-1 {% if not cart_count %}visually-hidden{% endif %}" aria-live="polite" aria-atomic="true">{{ cart_count|default:0 }}</span>
                             </a>
                         </li>
 
@@ -916,10 +927,15 @@
                     })
                     .then(data => {
                         if (data && data.success) {
-                            // Update cart count
+                            // Update cart count and toggle visibility if zero
                             const cartCountEl = document.getElementById('cart-count');
                             if (cartCountEl) {
                                 cartCountEl.textContent = data.cart_count;
+                                if (parseInt(data.cart_count, 10) > 0) {
+                                    cartCountEl.classList.remove('visually-hidden');
+                                } else {
+                                    cartCountEl.classList.add('visually-hidden');
+                                }
                             }
                             // Show toast
                             showCartToast(data.product_name || productName);

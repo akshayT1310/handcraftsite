@@ -15,6 +15,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-1%yq_ex3tg@tt2c&!+s5th)h^bc17nl1_7fc1mn6x0-dw#z#=0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -62,25 +65,80 @@ TEMPLATES = [
 WSGI_APPLICATION = 'handcraftsite.wsgi.application'
 
 # Database
-if os.environ.get("VERCEL"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.environ.get("DB_NAME"),
-            "USER": os.environ.get("DB_USER"),
-            "PASSWORD": os.environ.get("DB_PASSWORD"),
-            "HOST": os.environ.get("DB_HOST"),
-            "PORT": "5432",
+# Priority order:
+# 1. `DATABASE_URL` env var (recommended for Supabase). If present we parse
+#    it via `dj_database_url` and enable SSL by default.
+# 2. Vercel-specific DB pieces (`DB_NAME` + `DB_HOST`) — legacy support.
+# 3. Local sqlite fallback.
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    # When a DATABASE_URL is provided (e.g. Supabase connection string),
+    # prefer that. However, importing Django's PostgreSQL backend requires
+    # a Postgres driver (psycopg or psycopg2). On Vercel build/runtime the
+    # driver may not be available during the build step which runs
+    # `manage.py collectstatic`. To avoid failing the build, detect the
+    # driver and fall back to SQLite during builds when necessary.
+    pg_driver_available = False
+    try:
+        import psycopg as _pg  # psycopg v3
+        pg_driver_available = True
+    except Exception:
+        try:
+            import psycopg2 as _pg  # legacy psycopg2
+            pg_driver_available = True
+        except Exception:
+            pg_driver_available = False
+
+    if pg_driver_available:
+        DATABASES = {
+            'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
         }
-    }
+    else:
+        # If we're running on Vercel (build) and driver isn't installed,
+        # fall back to sqlite to let build steps like collectstatic succeed.
+        if os.environ.get('VERCEL'):
+            import warnings
+
+            warnings.warn(
+                "Postgres driver (psycopg/psycopg2) not installed; falling back to sqlite for build. "
+                "To use Supabase in production, add 'psycopg[binary]' to requirements.txt and pin a compatible Python runtime on Vercel."
+            )
+            DATABASES = {
+                "default": {
+                    "ENGINE": "django.db.backends.sqlite3",
+                    "NAME": BASE_DIR / "db.sqlite3",
+                }
+            }
+        else:
+            raise RuntimeError(
+                "DATABASE_URL is set but no Postgres driver (psycopg/psycopg2) is installed. "
+                "Install 'psycopg[binary]' in your environment."
+            )
 else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+    # On Vercel builds the VERCEL env var may be present even when DB creds
+    # are not configured. Only use the explicit DB_* env vars if provided.
+    USE_PG = bool(os.environ.get("VERCEL") and os.environ.get("DB_NAME") and os.environ.get("DB_HOST"))
+    if USE_PG:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": os.environ.get("DB_NAME"),
+                "USER": os.environ.get("DB_USER"),
+                "PASSWORD": os.environ.get("DB_PASSWORD"),
+                "HOST": os.environ.get("DB_HOST"),
+                "PORT": os.environ.get("DB_PORT") or "5432",
+                # ensure SSL when connecting to hosted DBs
+                "OPTIONS": {"sslmode": "require"},
+            }
         }
-    }
-    
+    else:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {

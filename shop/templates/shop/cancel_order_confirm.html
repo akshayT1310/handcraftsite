@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Cancel Order {% endblock %}
+{% block title %}Cancel Order #{{ order.id }}{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -32,14 +32,17 @@
                             <tr>
                                 <td><strong>Status:</strong></td>
                                 <td>
-                                    <span class="badge" 
-                                    {% if order.status == 'Pending' %}style="background-color: #dc3545;"
-                                    {% elif order.status == 'Packed' %}style="background-color: #ffc107;"
-                                    {% elif order.status == 'Shipped' %}style="background-color: #007bff;"
-                                    {% elif order.status == 'Delivered' %}style="background-color: #28a745;"
-                                    {% endif %}>
-                                        {{ order.status }}
-                                    </span>
+                                    {% if order.status == 'Pending' %}
+                                        <span class="badge bg-danger">Pending</span>
+                                    {% elif order.status == 'Packed' %}
+                                        <span class="badge bg-warning text-dark">Packed</span>
+                                    {% elif order.status == 'Shipped' %}
+                                        <span class="badge bg-primary">Shipped</span>
+                                    {% elif order.status == 'Delivered' %}
+                                        <span class="badge bg-success">Delivered</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ order.status }}</span>
+                                    {% endif %}
                                 </td>
                             </tr>
                             <tr>
@@ -59,22 +62,32 @@
                         </table>
                     </div>
 
+                    {% if order.status == 'Pending' %}
                     <form method="POST" action="{% url 'cancel_order' order.id %}" id="cancelForm">
                         {% csrf_token %}
 
                         <div class="form-group mb-4">
                             <label for="reason"><strong>Reason for Cancellation (Optional):</strong></label>
-                            <textarea class="form-control" id="reason" name="reason" rows="4" placeholder="Let us know why you're cancelling this order..." maxlength="250"></textarea>
+                            <textarea class="form-control" id="reason" name="reason" rows="4" placeholder="Let us know why you're cancelling this order..." maxlength="250" aria-label="Reason for cancellation"></textarea>
                             <small class="form-text text-muted">Maximum 250 characters</small>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                             <a href="{% url 'my_orders' %}" class="btn btn-secondary">Go Back</a>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal" aria-haspopup="dialog" aria-controls="confirmModal">
                                 ❌ Cancel Order
                             </button>
                         </div>
                     </form>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Cancellation is not available for orders with status "<strong>{{ order.status }}</strong>".
+                        If you need assistance, please <a href="mailto:info@handcraft.com">contact support</a>.
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'my_orders' %}" class="btn btn-secondary">Go Back</a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -82,6 +95,7 @@
 </div>
 
 <!-- Confirmation Modal -->
+{% if order.status == 'Pending' %}
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -103,6 +117,7 @@
         </div>
     </div>
 </div>
+{% endif %}
 
 <script>
 function submitCancelForm() {
